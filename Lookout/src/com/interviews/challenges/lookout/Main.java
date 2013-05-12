@@ -29,7 +29,6 @@ public class Main {
 	private static InputStreamReader ins = null;
 	private static BufferedReader bfReader = null;
 	private static LinkedList<String> originalLines = new LinkedList<String>();
-	private static String finalString = null;
 
 	/**
 	 * @param args
@@ -110,13 +109,8 @@ public class Main {
 			String tempString = it.next();
 			String[] temp_whole = splitLine(tempString);
 			String[] temp_f = extract_F(temp_whole[1]);
-			String[] temp_r = extract_R(temp_whole[1]);
-			System.out.println("Line " + (i + 1));
-			System.out.println("Original String: " + temp_whole[0]);
-			findAndReplace(temp_whole[0], temp_f, temp_r);
-			System.out.println("New String: "
-					+ finalString);
-			System.out.println("************************************* \n");
+			String[] temp_r = extract_R(temp_whole[1]);			
+			System.out.println(findAndReplace(temp_whole[0], temp_f, temp_r));
 			i++;
 		}
 		
@@ -184,7 +178,7 @@ public class Main {
 	 *            String[] of Rn
 	 * @return New string after find and replace operations
 	 */
-	private static int findAndReplace(String originalLine, String[] fArray,
+	private static String findAndReplace(String originalLine, String[] fArray,
 			String[] rArray) {
 		String newLine = originalLine;
 		StringBuilder sbuilder = new StringBuilder(newLine);
@@ -209,12 +203,9 @@ public class Main {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				System.out.println("Find & Replace " + (i + 1) + ": "
-						+ sbuilder.toString());
 			}
 		}
 
-		finalString = sbuilder.toString();
-		return 0;
+		return sbuilder.toString();
 	}
 }
