@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -12,16 +13,15 @@ public class Main {
 
 	/**
 	 * 
-	 * @author Mehmet Emre Aydinli 
+	 * @author Mehmet Emre Aydinli
 	 * 
-	 * 		   Given a string S, and a list of strings of
-	 *         positive length, F1,R1,F2,R2,...,FN,RN, proceed to find in order
-	 *         the occurrences (left-to-right) of Fi in S and replace them with
-	 *         Ri. All strings are over alphabet { 0, 1 }. Searching should
-	 *         consider only contiguous pieces of S that have not been subject
-	 *         to replacements on prior iterations. An iteration of the
-	 *         algorithm should not write over any previous replacement by the
-	 *         algorithm.
+	 *         Given a string S, and a list of strings of positive length,
+	 *         F1,R1,F2,R2,...,FN,RN, proceed to find in order the occurrences
+	 *         (left-to-right) of Fi in S and replace them with Ri. All strings
+	 *         are over alphabet { 0, 1 }. Searching should consider only
+	 *         contiguous pieces of S that have not been subject to replacements
+	 *         on prior iterations. An iteration of the algorithm should not
+	 *         write over any previous replacement by the algorithm.
 	 * 
 	 */
 
@@ -109,12 +109,13 @@ public class Main {
 			String tempString = it.next();
 			String[] temp_whole = splitLine(tempString);
 			String[] temp_f = extract_F(temp_whole[1]);
-			String[] temp_r = extract_R(temp_whole[1]);			
+			String[] temp_r = extract_R(temp_whole[1]);
 			System.out.println(findAndReplace(temp_whole[0], temp_f, temp_r));
 			i++;
 		}
-		
-		// Challenge condition: All programs should return a zero exit code on success.
+
+		// Challenge condition: All programs should return a zero exit code on
+		// success.
 		System.exit(0);
 	}
 
@@ -180,32 +181,56 @@ public class Main {
 	 */
 	private static String findAndReplace(String originalLine, String[] fArray,
 			String[] rArray) {
-		String newLine = originalLine;
-		StringBuilder sbuilder = new StringBuilder(newLine);
-		int f_begin = 0;
-		int f_end = 0;
 
-		for (int i = 0; (i < fArray.length && i < rArray.length); i++) {
-			if (f_end < sbuilder.length()) {
-				// Try not to step out of bounds
-				f_begin = sbuilder.indexOf(fArray[i], f_end);
-			} else {
-				// If going out of bounds, go back to the beginning of the array
-				f_begin = sbuilder.indexOf(fArray[i], 0);
-			}
-			
-			// If it there is no match, then indexOf() returns -1
-			if (f_begin != -1) {
-				f_end = f_begin + (fArray[i].length());
-				try {
-					sbuilder.replace(f_begin, f_end, rArray[i]);
-				} catch (StringIndexOutOfBoundsException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		String[] newline = originalLine.split("(?!^)");
+
+		// i controls iteration through the whole strings in f and r
+		for (int i = 0; i < fArray.length; i++) {
+			String[] fn = fArray[i].split("(?!^)");
+			String[] rn = rArray[i].split("(?!^)");
+			// j for iteration through newline
+			int j = 0;
+			// k for iteration through fn/rn
+			int k = 0;
+			// marks the last known match index
+			int marker = 0;
+			// match counter
+			int matchCounter = 0;
+			int temp = 0;
+
+			while (j < newline.length) {
+				if (newline[j].equals(fn[k])) {
+					// found a match
+					// k+1 to check the next fn[]
+					k++;
+					// mark this position
+					marker = j;
+					// move to next newline[]
+					j++;
+					matchCounter++;
+					if (k == fn.length) {
+						temp++;						
+						newline[j-k] = rArray[i];
+						// Replace the string
+						for(int m = 1 ; m < fn.length; m++) {
+							newline[(j-k+m)] = "";
+						}
+						k = 0;
+					}
+				} else {
+					// reset k, j and match counter
+					matchCounter = 0;
+					j = j - k + 1;
+					k = 0;
 				}
 			}
 		}
-
-		return sbuilder.toString();
+		
+		String newString = "";
+		for(String t : newline) {
+			newString += t;
+		}
+		
+		return newString;
 	}
 }
